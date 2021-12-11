@@ -1,0 +1,11 @@
+name: gaston11276/fivemui
+version: 0.1.0
+description: NFive Plugin
+author: gaston11276
+license: LGPL-3.0-or-later
+client:
+  main:
+    - Gaston11276.Fivemui.Client
+  files:
+    - Overlays/FivemuiOverlay.html
+    - SimpleUi.dll

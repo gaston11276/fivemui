@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<style type="text/css">
+		html, body {
+			width: 100vw;
+			height: 100vh;
+			margin: 0;
+			overflow: hidden;
+			font-size: 10vh;
+			user-select: none;
+			outline: none;
+			background-color: transparent;
+		}
+	</style>
+
+	<!--
+	<script>
+		nfive.show();
+	</script>
+	-->
+
+	<script>
+		'use strict';
+
+		document.addEventListener('keypress', (event) => {
+			nfive.send('OnKeyPress', event.keyCode);
+		}, false);
+
+		document.addEventListener('keydown', (event) => {
+			nfive.send('OnKeyDown', event.keyCode);
+		}, false);
+
+		document.addEventListener('keyup', (event) => {
+			nfive.send('OnKeyUp', event.keyCode);
+		}, false);
+
+	</script>
+
+	<script>
+		'use strict';
+
+		document.addEventListener('mousedown', (event) => {
+			nfive.send('OnMouseButtonDown', event.button, event.clientX, event.clientY);
+		}, false);
+
+		document.addEventListener('mouseup', (event) => {
+			nfive.send('OnMouseButtonRelease', event.button, event.clientX, event.clientY);
+		}, false);
+
+		document.addEventListener('mousemove', (event) => {
+			nfive.send('OnMouseMove', event.clientX, event.clientY)
+		}, false);
+
+	</script>
+</head>
+
+	<body>
+
+	</body>
+</html>
