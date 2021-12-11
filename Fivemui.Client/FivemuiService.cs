@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using NFive.SDK.Client.Commands;
@@ -23,8 +24,8 @@ namespace Gaston11276.Fivemui.Client
 			WindowManager.Delay = Delay;
 			WindowManager.OnResolutionChanged(); // Should be called if resolution (or screen size) is changed.
 
-			this.Ticks.On(WindowManager.OnFiveMInput);
-			this.Ticks.On(WindowManager.OnDraw);
+			this.Ticks.On(new Action(WindowManager.OnFiveMInput));
+			this.Ticks.On(new Action(WindowManager.OnDraw));
 
 			WindowManager.overlay = new FivemuiOverlay(OverlayManager);
 			WindowManager.Init();
