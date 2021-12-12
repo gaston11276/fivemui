@@ -28,7 +28,7 @@ namespace Gaston11276.Fivemui
 			return (float)Math.Atan2(sinA, cosA) / DegToRad;
 		}
 
-		static private Camera camera;
+		static private Camera camera = null;
 		static private CameraMode mode;
 
 		static UiCamera()
@@ -125,6 +125,8 @@ namespace Gaston11276.Fivemui
 
 		static public void UpdateCamera(float axisX, float axisY)
 		{
+			if (camera == null) return;
+
 			float angleX = -2.0f;
 			angleX *= axisX;
 
