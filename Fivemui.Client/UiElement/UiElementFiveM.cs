@@ -11,12 +11,24 @@ namespace Gaston11276.Fivemui
 		static public ILogger Logger;
 		public Guid Id;
 		public delegate void fpGuid(Guid id);
-		protected List<fpGuid> callbacksOnSelectId;
+		protected List<fpGuid> callbacksOnSelectId = new List<fpGuid>();
+		protected List<fpVoid> callbacksOffSelect = new List<fpVoid>();
+		protected List<fpVoid> onDisableCallbacks = new List<fpVoid>();
+		protected List<fpVoid> offDisableCallbacks = new List<fpVoid>();
+
+		protected Argb color;
+		protected Argb colorFocus;
+		protected Argb colorSelected;
+		protected Argb colorDisabled;
 
 		public UiElementFiveM()
 		{
 			Type = UiElementType.Rectangle;
-			callbacksOnSelectId = new List<fpGuid>();
+
+			color = new Argb(100, 20, 20, 20);
+			colorFocus = new Argb(100, 200, 200, 100);
+			colorSelected = new Argb(100, 100, 100, 200);
+			colorDisabled = new Argb(50, 20, 20, 20);
 		}
 
 		public void SetLogger(ILogger Logger)
@@ -35,46 +47,62 @@ namespace Gaston11276.Fivemui
 			callbacksOnSelectId.Add(OnSelectId);
 		}
 
-		protected override void OnFocus()
+		public void RegisterOffSelect(fpVoid OffSelect)
+		{
+			callbacksOffSelect.Add(OffSelect);
+		}
+
+		public override void OnFocus()
 		{
 			if ((flags & SELECTED) == 0)
 			{
-				currentColorBackground = colorFocus;
+				colorBackground = colorFocus;
 			}
 		}
 
-		protected override void OffFocus()
+		public override void OffFocus()
 		{
 			if ((flags & SELECTED) == 0)
 			{
-				currentColorBackground = colorBackground;
+				colorBackground = color;
 			}
 		}
 
-		protected override void OnSelect()
+		public override void OnSelect()
 		{
-			currentColorBackground = colorSelected;
+			colorBackground = colorSelected;
+			OnSelectId(Id);
 		}
 
-		protected override void OffSelect()
+		public override void OffSelect()
 		{
-			currentColorBackground = colorBackground;
+			colorBackground = color;
+			foreach (fpVoid OffSelect in callbacksOffSelect)
+			{
+				OffSelect();
+			}
 		}
 
-		public new void OnDisabled()
+		public override void OnDisabled()
 		{
-			currentColorBackground = colorDisabled;
+			colorBackground = colorDisabled;
+			foreach (fpVoid OnDisable in onDisableCallbacks)
+			{
+				OnDisable();
+			}
 		}
 
-		public new void OffDisabled()
+		public override void OffDisabled()
 		{
-			currentColorBackground = colorBackground;
+			colorBackground = color;
+			foreach (fpVoid OffDisable in offDisableCallbacks)
+			{
+				OffDisable();
+			}
 		}
 
-		protected override void RunOnSelectCallbacks()
+		public void OnSelectId(Guid Id)
 		{
-			base.RunOnSelectCallbacks();
-
 			foreach (fpGuid  OnSelectId in callbacksOnSelectId)
 			{
 				OnSelectId(Id);
@@ -97,11 +125,13 @@ namespace Gaston11276.Fivemui
 		public void Enable()
 		{
 			ClearFlags(DISABLED);
+			OffDisabled();
 		}
 
 		public void Disable()
 		{
 			SetFlags(DISABLED);
+			OnDisabled();
 		}
 
 		public void Select()
@@ -127,10 +157,10 @@ namespace Gaston11276.Fivemui
 							drawingRectangle.CenterY(),
 							drawingRectangle.Width(),
 							drawingRectangle.Height(),
-							currentColorBackground.GetRed(),
-							currentColorBackground.GetGreen(),
-							currentColorBackground.GetBlue(),
-							currentColorBackground.GetAlpha());
+							colorBackground.GetRed(),
+							colorBackground.GetGreen(),
+							colorBackground.GetBlue(),
+							colorBackground.GetAlpha());
 			}
 			
 

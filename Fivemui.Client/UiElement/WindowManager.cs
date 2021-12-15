@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using NFive.SDK.Client.Interface;
 using Gaston11276.Fivemui.Client.Overlays;
@@ -14,11 +15,11 @@ namespace Gaston11276.Fivemui
 	public delegate void fpOnMouseMove(float x, float y);
 	public delegate void fpOnMouseButton(int state, int button, float x, float y);
 	public delegate void fpOnKey(int state, int keycode);
+	public delegate void fpPedHash(PedHash pedHash);
 
 	public static class WindowManager
 	{
 		static public int delayMs = 10;
-		//static public List<Window> windows = new List<Window>();
 
 		public static List<fpOnKey> inputsOnKey = new List<fpOnKey>();
 		public static List<fpOnMouseMove> inputsOnMouseMove = new List<fpOnMouseMove>();
@@ -26,11 +27,8 @@ namespace Gaston11276.Fivemui
 
 		static public fpDelay Delay;
 
-		//static public IOverlayManager overlayManager;
 		static public FivemuiOverlay overlay;
 		static UiElementFiveM mainElement = new UiElementFiveM();
-
-		//static bool holdFocus;
 
 		public static void Init()
 		{

@@ -7,7 +7,10 @@ namespace Gaston11276.Fivemui
 	public class Textbox : UiElementFiveM
 	{		
 		Argb textColor;
-
+		Argb textColorDefault;
+		Argb textColorDisabled;
+		private int fontIndex = 0;
+		private float fontSize = 0.3f;
 		protected int textFlags;
 		protected string text;
 		private float textWidth;
@@ -21,6 +24,8 @@ namespace Gaston11276.Fivemui
 			Type = UiElementType.Textbox;
 			textFlags = 0;
 			textColor = new Argb(0xFFFFFFFF);
+			textColorDefault = textColor;
+			textColorDisabled = new Argb(0x80FFFFFF);
 			text = "";
 			needRefresh = true;
 
@@ -64,9 +69,14 @@ namespace Gaston11276.Fivemui
 			TextChanged();
 		}
 
-		public void SetFont(int fontIndex)
+		public void SetFontSize(float fontSize)
 		{
-			SetTextFont(fontIndex);
+			this.fontSize = fontSize;
+		}
+
+		public void SetFont(Font font)
+		{
+			this.fontIndex = (int)font;
 			TextChanged();
 		}
 
@@ -93,30 +103,65 @@ namespace Gaston11276.Fivemui
 			textColor.SetARGB(ARGB);
 		}
 
+		public override void OnDisabled()
+		{
+			textColor = textColorDisabled;
+			colorBackground = colorDisabled;
+
+			foreach (fpVoid OnDisable in onDisableCallbacks)
+			{
+				OnDisable();
+			}
+		}
+
+		public override void OffDisabled()
+		{
+			textColor = textColorDefault;
+			colorBackground = color;
+
+			foreach (fpVoid OffDisable in offDisableCallbacks)
+			{
+				OffDisable();
+			}
+		}
+
 		protected override float GetContentWidth()
 		{
 			BeginTextCommandWidth("STRING");
+			SetTextScale(1f, fontSize);
+			SetTextFont(fontIndex);
 			AddTextComponentString(this.text);
-			textWidth = EndTextCommandGetWidth(false) * 0.3f;
+			textWidth = EndTextCommandGetWidth(false);
 			return textWidth;
 		}
 		protected override float GetContentHeight()
 		{
-			textHeight = 0.3f * 0.03f;
+			float sy = screenResolutionX / screenResolutionY;
+			textHeight = (1f/sy)*GetTextScaleHeight(fontSize, (int)fontIndex);
 			return textHeight;
 		}
 
 		public override void Draw()
 		{
+			UiRectangle textRectangle = new UiRectangle();
+
 			base.Draw();
 
-			if ((flags & HIDDEN) != 0 || (textFlags & TRANSPARENT) != 0)
+			if ((flags & HIDDEN) != 0)// || (textFlags & TRANSPARENT) != 0)
 			{
 				return;
 			}
 			
 			BeginTextCommandDisplayText("STRING");
-			SetTextScale(1f, 0.3f);
+			SetTextScale(1f, fontSize);
+			SetTextFont(fontIndex);
+
+			if ((textFlags & UiElementTextbox.TEXT_OUTLINE) != 0)
+			{
+				SetTextOutline();
+			}
+
+			SetTextCentre(true);
 
 			float textX = 0f;
 			if (this.hGravity == HGravity.Left)
@@ -131,13 +176,14 @@ namespace Gaston11276.Fivemui
 			}
 			else if (this.hGravity == HGravity.Right)
 			{
+				//SetTextRightJustify(true);
 				SetTextJustification(2);
+				SetTextWrap(drawingRectangle.Left(), drawingRectangle.Right());
 				textX = drawingRectangle.Right() - (Padding.Right() * screenBoundaries.Width());
 			}
 
-			float y_adjust = -0.012f;
 			float text_x = textX;
-			float text_y = drawingRectangle.CenterY() + y_adjust;
+			float text_y = drawingRectangle.Top() + (textHeight * 0.15f);
 
 			SetTextColour(textColor.GetRed(), textColor.GetGreen(), textColor.GetBlue(), textColor.GetAlpha());
 			AddTextComponentString(this.text);

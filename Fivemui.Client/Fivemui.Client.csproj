@@ -71,6 +71,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FivemuiService.cs" />
     <Compile Include="UiElement\Editbox.cs" />
+    <Compile Include="UiElement\Fonts.cs" />
     <Compile Include="UiElement\UiInput.cs" />
     <Compile Include="UiElement\UiElementFiveM.cs" />
     <Compile Include="UiElement\Textbox.cs" />
